@@ -5,6 +5,14 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardGen.Main", "FlashcardGen.Main\FlashcardGen.Main.csproj", "{E9C752AC-6D2E-4264-A417-883A5F5F054A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardGen.Core", "FlashcardGen.Core\FlashcardGen.Core.csproj", "{B94B4433-CC64-4D75-B86C-40A4B380F41F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardGen.DataAccess", "FlashcardGen.DataAccess\FlashcardGen.DataAccess.csproj", "{EF7DB2F0-167A-404B-94E2-15A587A5FE6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardGen.Models", "FlashcardGen.Models\FlashcardGen.Models.csproj", "{68154337-F549-4FEB-A3C3-4DE55B68399E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardGen.Common", "FlashcardGen.Common\FlashcardGen.Common.csproj", "{7ADCAD4F-0D25-48FD-B153-3CEAA3FDB56F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +23,22 @@ Global
 		{E9C752AC-6D2E-4264-A417-883A5F5F054A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9C752AC-6D2E-4264-A417-883A5F5F054A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9C752AC-6D2E-4264-A417-883A5F5F054A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B94B4433-CC64-4D75-B86C-40A4B380F41F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B94B4433-CC64-4D75-B86C-40A4B380F41F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B94B4433-CC64-4D75-B86C-40A4B380F41F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B94B4433-CC64-4D75-B86C-40A4B380F41F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF7DB2F0-167A-404B-94E2-15A587A5FE6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF7DB2F0-167A-404B-94E2-15A587A5FE6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF7DB2F0-167A-404B-94E2-15A587A5FE6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF7DB2F0-167A-404B-94E2-15A587A5FE6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68154337-F549-4FEB-A3C3-4DE55B68399E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68154337-F549-4FEB-A3C3-4DE55B68399E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68154337-F549-4FEB-A3C3-4DE55B68399E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68154337-F549-4FEB-A3C3-4DE55B68399E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ADCAD4F-0D25-48FD-B153-3CEAA3FDB56F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ADCAD4F-0D25-48FD-B153-3CEAA3FDB56F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ADCAD4F-0D25-48FD-B153-3CEAA3FDB56F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ADCAD4F-0D25-48FD-B153-3CEAA3FDB56F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
