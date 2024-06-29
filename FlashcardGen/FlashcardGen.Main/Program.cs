@@ -5,6 +5,9 @@ using FlashcardGen.Common;
 using FlashcardGen.DataAccess;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+
+Console.OutputEncoding = Encoding.UTF8;
 
 var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())

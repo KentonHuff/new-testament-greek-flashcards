@@ -1,9 +1,7 @@
-﻿using FlashcardGen.Models;
-
-namespace FlashcardGen.DataAccess
+﻿namespace FlashcardGen.DataAccess
 {
     public interface ILocalFileAccessor
     {
-        DataRowEntities ProcessNextRow();
+        string? GetNextOpenGNTRow();
     }
 }
