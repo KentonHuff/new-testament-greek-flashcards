@@ -1,5 +1,8 @@
-﻿namespace FlashcardGen.Models.DbModels
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace FlashcardGen.Models.DbModels
 {
+    [Index(nameof(ExtendedStrongsNumber))]
     public class Lexeme
     {
         public int LexemeId { get; set; }

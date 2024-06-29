@@ -1,5 +1,8 @@
-﻿namespace FlashcardGen.Models.DbModels
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace FlashcardGen.Models.DbModels
 {
+    [Index(nameof(LowercaseSpelling), nameof(RobinsonsMorphologicalAnalysisCode), nameof(LexemeId))]
     public class WordForm
     {
         public int WordFormId { get; set; }

@@ -1,5 +1,8 @@
-﻿namespace FlashcardGen.Models.DbModels
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace FlashcardGen.Models.DbModels
 {
+    [Index(nameof(BookNumber), nameof(ChapterNumber), nameof(VerseNumber))]
     public class Verse
     {
         public int VerseId { get; set; }

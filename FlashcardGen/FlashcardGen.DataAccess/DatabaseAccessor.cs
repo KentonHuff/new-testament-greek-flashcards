@@ -20,9 +20,16 @@ namespace FlashcardGen.DataAccess
 
             string? currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
 
+            int currentOccurrenceNumber = 0;
+
             while (currentOpenGNTRow != null)
             {
-                //await AddEntitiesFromRow(currentOpenGNTRow);
+                if (currentOccurrenceNumber % 1000 == 0)
+                    Console.WriteLine($"{Math.Round(100.0 * currentOccurrenceNumber / Constants.NumberOfWordOccurrences)}%");
+
+                await AddEntitiesFromRow(currentOpenGNTRow);
+
+                ++currentOccurrenceNumber;
 
                 currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
             }
@@ -47,9 +54,9 @@ namespace FlashcardGen.DataAccess
 
             entities.WordForm = await _dbContext.WordForms.AddIfNotExistsAsync(
                 entity: entities.WordForm,
-                predicate: wf => wf.LexemeId == entities.WordForm.LexemeId
-                    && wf.LowercaseSpelling == entities.WordForm.LowercaseSpelling
+                predicate: wf => wf.LowercaseSpelling == entities.WordForm.LowercaseSpelling
                     && wf.RobinsonsMorphologicalAnalysisCode == entities.WordForm.RobinsonsMorphologicalAnalysisCode
+                    && wf.LexemeId == entities.WordForm.LexemeId
             );
             //await _dbContext.SaveChangesAsync();
             entities.WordFormOccurrence.WordFormId = entities.WordForm.WordFormId;

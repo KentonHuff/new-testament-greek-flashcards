@@ -2,6 +2,7 @@
 {
     public static class Constants
     {
+        public const int NumberOfWordOccurrences = 138013;
         public static class LocalFiles
         {
             public const string ConfigFileName = "config.json";
