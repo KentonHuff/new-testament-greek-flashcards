@@ -15,6 +15,7 @@ var services = new ServiceCollection();
 services.AddSingleton<IConfiguration>(configBuilder.Build());
 services.AddSingleton<ICardGenerator, CardGenerator>();
 services.AddSingleton<IDatabaseAccessor, DatabaseAccessor>();
+services.AddSingleton<ILocalFileAccessor, LocalFileAccessor>();
 
 using (var connection = new SqliteConnection("DataSource=:memory:"))
 {
