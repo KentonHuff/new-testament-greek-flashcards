@@ -2,6 +2,6 @@
 {
     public interface IDatabaseAccessor
     {
-        public void Test();
+        public Task LoadDb();
     }
 }

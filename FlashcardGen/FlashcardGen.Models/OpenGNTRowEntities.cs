@@ -2,7 +2,7 @@
 
 namespace FlashcardGen.Models
 {
-    public class DataRowEntities
+    public class OpenGNTRowEntities
     {
         public Lexeme Lexeme { get; set; }
         public WordForm WordForm { get; set; }

@@ -23,7 +23,7 @@ namespace FlashcardGen.DataAccess
 
             _ = _openGNTLines.MoveNext();
 
-            if (_openGNTLines.Current.Length > 0)
+            if (_openGNTLines.Current?.Length > 0)
                 return _openGNTLines.Current;
 
             _openGNTLines.Dispose();

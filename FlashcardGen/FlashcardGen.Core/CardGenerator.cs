@@ -19,7 +19,7 @@ namespace FlashcardGen.Core
         {
             Console.WriteLine("Generating cards...");
             Console.WriteLine(_configuration[Constants.ConfigPaths.OpenGNTBaseTextZipURL]);
-            _databaseAccessor.Test();
+            _databaseAccessor.LoadDb();
         }
     }
 }
