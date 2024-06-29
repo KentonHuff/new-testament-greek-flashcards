@@ -18,14 +18,14 @@ namespace FlashcardGen.DataAccess
         {
             await _dbContext.Database.EnsureCreatedAsync();
 
-            /*string? currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
+            string? currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
 
             while (currentOpenGNTRow != null)
             {
-                await AddEntitiesFromRow(currentOpenGNTRow);
+                //await AddEntitiesFromRow(currentOpenGNTRow);
 
                 currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
-            }*/
+            }
 
             Console.WriteLine(_dbContext.Lexemes.Count());
             Console.WriteLine(_dbContext.WordForms.Count());

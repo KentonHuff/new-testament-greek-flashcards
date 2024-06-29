@@ -40,13 +40,11 @@ namespace FlashcardGen.Common
             result.WordFormOccurrence = new()
             {
                 IsCapitalized = char.IsUpper(greekForms[2][0]),
+                IsAllCaps = greekForms[2].Length > 1 && char.IsUpper(greekForms[2][1]),
                 StudyTranslationGloss = englishForms[3],
                 PreOccurrencePunctuationMarks = punctuationMarks[0].Replace("<pm>", "").Replace("</pm>", ""),
                 PostOccurrencePunctuationMarks = punctuationMarks[1].Replace("<pm>", "").Replace("</pm>", ""),
             };
-
-            if (greekForms[2].Length > 1 && char.IsUpper(greekForms[2][1]))
-                Console.WriteLine($"Word with multiple capitalized characters: {greekForms[2]}");
 
             return result;
         }
