@@ -17,6 +17,7 @@ namespace FlashcardGen.DataAccess
         public async Task LoadDb()
         {
             await _dbContext.Database.EnsureCreatedAsync();
+            _dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
 
             string? currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
 
@@ -33,6 +34,10 @@ namespace FlashcardGen.DataAccess
 
                 currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
             }
+
+            _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+
+            //await _dbContext.SaveChangesAsync();
 
             Console.WriteLine(_dbContext.Lexemes.Count());
             Console.WriteLine(_dbContext.WordForms.Count());
