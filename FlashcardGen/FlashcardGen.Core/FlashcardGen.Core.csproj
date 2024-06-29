@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FlashcardGen.Common\FlashcardGen.Common.csproj" />
+    <ProjectReference Include="..\FlashcardGen.DataAccess\FlashcardGen.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
