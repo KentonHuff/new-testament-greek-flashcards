@@ -2,6 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using FlashcardGen.Core;
 using FlashcardGen.Common;
+using FlashcardGen.DataAccess;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -12,6 +15,15 @@ var services = new ServiceCollection();
 services.AddSingleton<IConfiguration>(configBuilder.Build());
 services.AddSingleton<ICardGenerator, CardGenerator>();
 
-services.BuildServiceProvider()
+using (var connection = new SqliteConnection("DataSource=:memory:"))
+{
+    connection.Open();
+
+    services.AddDbContext<OpenGreekNewTestamentContext>(
+        options => options.UseSqlite(connection)
+    );
+
+    services.BuildServiceProvider()
     .GetService<ICardGenerator>()!
     .GenerateCards();
+}
