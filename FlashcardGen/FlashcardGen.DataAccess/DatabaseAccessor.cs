@@ -42,12 +42,7 @@ namespace FlashcardGen.DataAccess
             Console.WriteLine(_dbContext.WordFormOccurrences.Count());
             Console.WriteLine(_dbContext.Verses.Count());
 
-            foreach (string issue in DbSetExtensions.issues)
-            {
-                Console.WriteLine(issue);
-            }
-
-
+            _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).ToList().ForEach(f => Console.WriteLine(f));
         }
 
         private async Task AddEntitiesFromRow(string openGNTRow)
