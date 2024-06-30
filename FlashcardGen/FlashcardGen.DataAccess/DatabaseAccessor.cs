@@ -37,12 +37,8 @@ namespace FlashcardGen.DataAccess
 
             _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            Console.WriteLine(_dbContext.Lexemes.Count());
-            Console.WriteLine(_dbContext.WordForms.Count());
-            Console.WriteLine(_dbContext.WordFormOccurrences.Count());
-            Console.WriteLine(_dbContext.Verses.Count());
-
-            _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).ToList().ForEach(f => Console.WriteLine(f));
+            //_dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).ToList().ForEach(f => Console.WriteLine(f));
+            //_dbContext.WordForms.Where(wf => wf.LowercaseSpelling.Length < 1).Select(wf => wf.LowercaseSpelling).ToList().ForEach(f => Console.WriteLine(f));
         }
 
         private async Task AddEntitiesFromRow(string openGNTRow)

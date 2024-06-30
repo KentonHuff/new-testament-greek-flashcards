@@ -2,6 +2,6 @@
 {
     public interface ICardGenerator
     {
-        void GenerateCards();
+        Task GenerateCards();
     }
 }

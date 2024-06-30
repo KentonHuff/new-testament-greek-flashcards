@@ -13,14 +13,16 @@ var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile(Constants.LocalFiles.ConfigFileName, optional: false);
 
+var configuration = configBuilder.Build();
+
 var services = new ServiceCollection();
 
-services.AddSingleton<IConfiguration>(configBuilder.Build());
+services.AddSingleton<IConfiguration>(configuration);
 services.AddSingleton<ICardGenerator, CardGenerator>();
 services.AddSingleton<IDatabaseAccessor, DatabaseAccessor>();
 services.AddSingleton<ILocalFileAccessor, LocalFileAccessor>();
 
-using (var connection = new SqliteConnection("DataSource=:memory:"))
+using (var connection = new SqliteConnection(Constants.ConnectionStrings.InMemory))
 {
     connection.Open();
 
@@ -28,7 +30,7 @@ using (var connection = new SqliteConnection("DataSource=:memory:"))
         options => options.UseSqlite(connection)
     );
 
-    services.BuildServiceProvider()
+    await services.BuildServiceProvider()
     .GetService<ICardGenerator>()!
     .GenerateCards();
 }

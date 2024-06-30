@@ -15,5 +15,11 @@
         {
             public const string OpenGNTBaseTextZipURL = "DataAcquisition:OpenGNTBaseTextZipURL";
         }
+
+        public static class ConnectionStrings
+        {
+            public const string InMemory = "DataSource=:memory:";
+            public const string OnDisk = "DataSource=./LocalFiles/Input/OpenGNTSQLite.db";
+        }
     }
 }

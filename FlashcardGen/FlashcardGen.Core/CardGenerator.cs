@@ -15,11 +15,11 @@ namespace FlashcardGen.Core
             _databaseAccessor = databaseAccessor;
         }
 
-        public void GenerateCards()
+        public async Task GenerateCards()
         {
             Console.WriteLine("Generating cards...");
             Console.WriteLine(_configuration[Constants.ConfigPaths.OpenGNTBaseTextZipURL]);
-            _databaseAccessor.LoadDb();
+            await _databaseAccessor.LoadDb();
         }
     }
 }
