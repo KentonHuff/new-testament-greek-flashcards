@@ -1,5 +1,17 @@
 {
-	"DataAcquisition": {
+	"Input": {
+		"ReadDbFromDisk": true,
+		"ReadUncompressedOpenGNTBaseText": true,
+		"ReadOpenGNTBaseTextZip": true,
+		"GetOpenGNTBaseTextZipFromInternet": true,
 		"OpenGNTBaseTextZipURL": "https://github.com/eliranwong/OpenGNT/blob/0029589cccd50bd48b1941aa041a956de6c29ac4/OpenGNT_BASE_TEXT.zip"
+	},
+	"Output": {
+		"WriteCardsToDisk": true,
+		"CardsFilePath": "./LocalFiles/Output/NewTestamentGreekFlashcards.csv",
+
+		"WriteDbToDisk": true,
+		"WriteUncompressedOpenGNTBaseText": true,
+		"WriteOpenGNTBaseTextZip": true
 	}
 }

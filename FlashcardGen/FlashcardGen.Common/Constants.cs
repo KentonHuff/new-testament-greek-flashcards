@@ -13,7 +13,7 @@
 
         public static class ConfigPaths
         {
-            public const string OpenGNTBaseTextZipURL = "DataAcquisition:OpenGNTBaseTextZipURL";
+            public const string OpenGNTBaseTextZipURL = "Input:OpenGNTBaseTextZipURL";
         }
 
         public static class ConnectionStrings
