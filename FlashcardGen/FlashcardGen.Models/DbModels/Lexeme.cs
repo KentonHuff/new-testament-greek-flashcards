@@ -2,7 +2,7 @@
 
 namespace FlashcardGen.Models.DbModels
 {
-    [Index(nameof(ExtendedStrongsNumber))]
+    [Index(nameof(LexicalForm), nameof(TyndaleHouseGloss))]
     public class Lexeme
     {
         public int LexemeId { get; set; }

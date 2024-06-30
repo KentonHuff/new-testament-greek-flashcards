@@ -9,8 +9,8 @@ namespace FlashcardGen.DataAccess
         public LocalFileAccessor()
         {
             _openGNTLines = File.ReadLines(
-                path: Constants.LocalFiles.OpenGreekNewTestamentPath + Constants.LocalFiles.OpenGreekNewTestamentFileName
-                , encoding: Encoding.UTF8
+                path: Constants.LocalFiles.OpenGreekNewTestamentPath + Constants.LocalFiles.OpenGreekNewTestamentFileName,
+                encoding: Encoding.UTF8
             ).GetEnumerator();
 
             _ = _openGNTLines.MoveNext(); //Skip the column name row

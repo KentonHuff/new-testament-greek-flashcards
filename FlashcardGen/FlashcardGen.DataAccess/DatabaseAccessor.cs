@@ -26,7 +26,7 @@ namespace FlashcardGen.DataAccess
             while (currentOpenGNTRow != null)
             {
                 if (currentOccurrenceNumber % 1000 == 0)
-                    Console.WriteLine($"{Math.Round(100.0 * currentOccurrenceNumber / Constants.NumberOfWordOccurrences)}%");
+                    Console.WriteLine($"Populating database: {Math.Round(100 * (double)currentOccurrenceNumber / Constants.NumberOfWordOccurrences, 1)}%");
 
                 await AddEntitiesFromRow(currentOpenGNTRow);
 
@@ -37,12 +37,17 @@ namespace FlashcardGen.DataAccess
 
             _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            //await _dbContext.SaveChangesAsync();
-
             Console.WriteLine(_dbContext.Lexemes.Count());
             Console.WriteLine(_dbContext.WordForms.Count());
             Console.WriteLine(_dbContext.WordFormOccurrences.Count());
             Console.WriteLine(_dbContext.Verses.Count());
+
+            foreach (string issue in DbSetExtensions.issues)
+            {
+                Console.WriteLine(issue);
+            }
+
+
         }
 
         private async Task AddEntitiesFromRow(string openGNTRow)
@@ -51,9 +56,9 @@ namespace FlashcardGen.DataAccess
 
             entities.Lexeme = await _dbContext.Lexemes.AddIfNotExistsAsync(
                 entity: entities.Lexeme,
-                predicate: l => l.ExtendedStrongsNumber == entities.Lexeme.ExtendedStrongsNumber
+                predicate: l => l.LexicalForm == entities.Lexeme.LexicalForm
+                    && l.TyndaleHouseGloss == entities.Lexeme.TyndaleHouseGloss
                 );
-            //await _dbContext.SaveChangesAsync();
             entities.WordForm.LexemeId = entities.Lexeme.LexemeId;
             entities.WordForm.Lexeme = entities.Lexeme;
 
@@ -63,7 +68,6 @@ namespace FlashcardGen.DataAccess
                     && wf.RobinsonsMorphologicalAnalysisCode == entities.WordForm.RobinsonsMorphologicalAnalysisCode
                     && wf.LexemeId == entities.WordForm.LexemeId
             );
-            //await _dbContext.SaveChangesAsync();
             entities.WordFormOccurrence.WordFormId = entities.WordForm.WordFormId;
             entities.WordFormOccurrence.WordForm = entities.WordForm;
 
@@ -73,7 +77,6 @@ namespace FlashcardGen.DataAccess
                     && v.ChapterNumber == entities.Verse.ChapterNumber
                     && v.VerseNumber == entities.Verse.VerseNumber
             );
-            //await _dbContext.SaveChangesAsync();
             entities.WordFormOccurrence.VerseId = entities.Verse.VerseId;
             entities.WordFormOccurrence.Verse = entities.Verse;
 
