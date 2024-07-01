@@ -25,6 +25,7 @@ namespace FlashcardGen.DataAccess
             if (bool.Parse(_configuration[Constants.ConfigPaths.ReadDbFromDisk]!) && File.Exists(Constants.LocalFiles.SQLiteDb))
             {
                 //We already read the db from disk in Program.cs
+                _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).Take(1).ToList().ForEach(f => Console.WriteLine(f));
                 return;
             }
             else if (bool.Parse(_configuration[Constants.ConfigPaths.ReadUncompressedOpenGNTBaseText]!) && File.Exists(Constants.LocalFiles.InputFilesPath + Constants.LocalFiles.OpenGreekNewTestamentFileName))
@@ -48,14 +49,12 @@ namespace FlashcardGen.DataAccess
                 }
 
                 _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+                _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).Take(1).ToList().ForEach(f => Console.WriteLine(f));
             }
             else
             {
                 throw new NotImplementedException();
             }
-
-            _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).Take(1).ToList().ForEach(f => Console.WriteLine(f));
-            //_dbContext.WordForms.Where(wf => wf.LowercaseSpelling.Length < 1).Select(wf => wf.LowercaseSpelling).ToList().ForEach(f => Console.WriteLine(f));
         }
 
         private async Task AddEntitiesFromRow(string openGNTRow)
