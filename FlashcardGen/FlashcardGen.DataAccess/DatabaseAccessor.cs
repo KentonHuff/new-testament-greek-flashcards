@@ -34,16 +34,12 @@ namespace FlashcardGen.DataAccess
 
                 string? currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
 
-                int currentOccurrenceNumber = 0;
-
-                while (currentOpenGNTRow != null)
+                for (int i = 0; currentOpenGNTRow != null; ++i)
                 {
-                    if (currentOccurrenceNumber % 1000 == 0)
-                        Console.WriteLine($"Populating database: {Math.Round(100 * (double)currentOccurrenceNumber / Constants.NumberOfWordOccurrences, 1)}%");
+                    if (i % 1000 == 0)
+                        Console.WriteLine($"Populating database: {Math.Round(100 * (double)i / Constants.NumberOfWordOccurrences, 1)}%");
 
                     await AddEntitiesFromRow(currentOpenGNTRow);
-
-                    ++currentOccurrenceNumber;
 
                     currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
                 }
