@@ -1,5 +1,7 @@
 ﻿using FlashcardGen.Common;
 using FlashcardGen.Models;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
 
 namespace FlashcardGen.DataAccess
 {
@@ -7,37 +9,52 @@ namespace FlashcardGen.DataAccess
     {
         private readonly OpenGreekNewTestamentContext _dbContext;
         private readonly ILocalFileAccessor _localFileAccessor;
+        private readonly IConfiguration _configuration;
 
-        public DatabaseAccessor(OpenGreekNewTestamentContext dbContext, ILocalFileAccessor localFileAccessor)
+        public DatabaseAccessor(OpenGreekNewTestamentContext dbContext, ILocalFileAccessor localFileAccessor, IConfiguration configuration)
         {
             _dbContext = dbContext;
             _localFileAccessor = localFileAccessor;
+            _configuration = configuration;
         }
 
         public async Task LoadDb()
         {
             await _dbContext.Database.EnsureCreatedAsync();
-            _dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
 
-            string? currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
-
-            int currentOccurrenceNumber = 0;
-
-            while (currentOpenGNTRow != null)
+            if (bool.Parse(_configuration[Constants.ConfigPaths.ReadDbFromDisk]!) && File.Exists(Constants.LocalFiles.SQLiteDb))
             {
-                if (currentOccurrenceNumber % 1000 == 0)
-                    Console.WriteLine($"Populating database: {Math.Round(100 * (double)currentOccurrenceNumber / Constants.NumberOfWordOccurrences, 1)}%");
+                //We already read the db from disk in Program.cs
+                return;
+            }
+            else if (bool.Parse(_configuration[Constants.ConfigPaths.ReadUncompressedOpenGNTBaseText]!) && File.Exists(Constants.LocalFiles.InputFilesPath + Constants.LocalFiles.OpenGreekNewTestamentFileName))
+            {
+                _dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                await AddEntitiesFromRow(currentOpenGNTRow);
+                string? currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
 
-                ++currentOccurrenceNumber;
+                int currentOccurrenceNumber = 0;
 
-                currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
+                while (currentOpenGNTRow != null)
+                {
+                    if (currentOccurrenceNumber % 1000 == 0)
+                        Console.WriteLine($"Populating database: {Math.Round(100 * (double)currentOccurrenceNumber / Constants.NumberOfWordOccurrences, 1)}%");
+
+                    await AddEntitiesFromRow(currentOpenGNTRow);
+
+                    ++currentOccurrenceNumber;
+
+                    currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
+                }
+
+                _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
 
-            _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-
-            _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).ToList().ForEach(f => Console.WriteLine(f));
+            _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).Take(1).ToList().ForEach(f => Console.WriteLine(f));
             //_dbContext.WordForms.Where(wf => wf.LowercaseSpelling.Length < 1).Select(wf => wf.LowercaseSpelling).ToList().ForEach(f => Console.WriteLine(f));
         }
 

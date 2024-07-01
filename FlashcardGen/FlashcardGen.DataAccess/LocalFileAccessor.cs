@@ -9,7 +9,7 @@ namespace FlashcardGen.DataAccess
         public LocalFileAccessor()
         {
             _openGNTLines = File.ReadLines(
-                path: Constants.LocalFiles.OpenGreekNewTestamentPath + Constants.LocalFiles.OpenGreekNewTestamentFileName,
+                path: Constants.LocalFiles.InputFilesPath + Constants.LocalFiles.OpenGreekNewTestamentFileName,
                 encoding: Encoding.UTF8
             ).GetEnumerator();
 

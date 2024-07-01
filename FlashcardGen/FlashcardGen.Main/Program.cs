@@ -22,15 +22,33 @@ services.AddSingleton<ICardGenerator, CardGenerator>();
 services.AddSingleton<IDatabaseAccessor, DatabaseAccessor>();
 services.AddSingleton<ILocalFileAccessor, LocalFileAccessor>();
 
-using (var connection = new SqliteConnection(Constants.ConnectionStrings.InMemory))
+using (var inMemoryConnection = new SqliteConnection(Constants.ConnectionStrings.InMemory))
 {
-    connection.Open();
+    inMemoryConnection.Open();
+
+    if (bool.Parse(configuration[Constants.ConfigPaths.ReadDbFromDisk]!) && File.Exists(Constants.LocalFiles.SQLiteDb))
+    {
+        using (var onDiskConnection = new SqliteConnection(Constants.ConnectionStrings.OnDisk))
+        {
+            onDiskConnection.Open();
+            onDiskConnection.BackupDatabase(inMemoryConnection);
+        }
+    }
 
     services.AddDbContext<OpenGreekNewTestamentContext>(
-        options => options.UseSqlite(connection)
+        options => options.UseSqlite(inMemoryConnection)
     );
 
     await services.BuildServiceProvider()
     .GetService<ICardGenerator>()!
     .GenerateCards();
+
+    if (bool.Parse(configuration[Constants.ConfigPaths.WriteDbToDisk]!))
+    {
+        using (var onDiskConnection = new SqliteConnection(Constants.ConnectionStrings.OnDisk))
+        {
+            onDiskConnection.Open();
+            inMemoryConnection.BackupDatabase(onDiskConnection);
+        }
+    }
 }
