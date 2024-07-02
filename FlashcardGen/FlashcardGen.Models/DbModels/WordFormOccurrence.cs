@@ -14,5 +14,6 @@
         public virtual WordForm WordForm { get; set; }
         public int VerseId { get; set; }
         public virtual Verse Verse { get; set; }
+        public virtual ICollection<Card> Cards { get; set; }
     }
 }

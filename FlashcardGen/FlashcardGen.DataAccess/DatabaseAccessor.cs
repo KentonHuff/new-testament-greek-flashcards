@@ -1,6 +1,8 @@
 ﻿using FlashcardGen.Common;
 using FlashcardGen.Models;
+using FlashcardGen.Models.DbModels;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace FlashcardGen.DataAccess
@@ -22,13 +24,12 @@ namespace FlashcardGen.DataAccess
         {
             await _dbContext.Database.EnsureCreatedAsync();
 
-            if (bool.Parse(_configuration[Constants.ConfigPaths.ReadDbFromDisk]!) && File.Exists(Constants.LocalFiles.SQLiteDb))
+            if (_dbContext.Lexemes.Any())
             {
                 //We already read the db from disk in Program.cs
-                _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).Take(1).ToList().ForEach(f => Console.WriteLine(f));
                 return;
             }
-            else if (bool.Parse(_configuration[Constants.ConfigPaths.ReadUncompressedOpenGNTBaseText]!) && File.Exists(Constants.LocalFiles.InputFilesPath + Constants.LocalFiles.OpenGreekNewTestamentFileName))
+            else if (bool.Parse(_configuration[Constants.ConfigPaths.ReadUncompressedOpenGNTBaseText]!))
             {
                 _dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
 
@@ -45,12 +46,25 @@ namespace FlashcardGen.DataAccess
                 }
 
                 _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-                _dbContext.WordForms.Select(wf => wf.RobinsonsMorphologicalAnalysisCode).Distinct().OrderBy(x => x).Take(1).ToList().ForEach(f => Console.WriteLine(f));
             }
             else
             {
                 throw new NotImplementedException();
             }
+        }
+
+        public IQueryable<WordForm> GetOrderedWordForms()
+        {
+            var result = (
+                from wordForm in _dbContext.WordForms
+                    join lexeme in (from occurrence in _dbContext.WordFormOccurrences
+                            group occurrence by occurrence.WordForm.LexemeId into lexemeGroup
+                            select new { LexemeId = lexemeGroup.Key, NumOccurrences = lexemeGroup.Count() })
+                        on wordForm.LexemeId equals lexeme.LexemeId
+                orderby lexeme.NumOccurrences descending, lexeme.LexemeId, wordForm.RobinsonsMorphologicalAnalysisCode
+                select wordForm
+            ).Include(wf => wf.Lexeme);
+            return result;
         }
 
         private async Task AddEntitiesFromRow(string openGNTRow)

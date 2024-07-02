@@ -1,6 +1,7 @@
 ﻿using FlashcardGen.Common;
 using Microsoft.Extensions.Configuration;
 using FlashcardGen.DataAccess;
+using FlashcardGen.Models.DbModels;
 
 namespace FlashcardGen.Core
 {
@@ -20,6 +21,12 @@ namespace FlashcardGen.Core
             Console.WriteLine("Generating cards...");
             Console.WriteLine(_configuration[Constants.ConfigPaths.OpenGNTBaseTextZipURL]);
             await _databaseAccessor.LoadDb();
+
+            IQueryable<WordForm> wordForms = _databaseAccessor.GetOrderedWordForms();
+            foreach (var wordForm in wordForms.Take(1))
+            {
+                Console.WriteLine($"{wordForm.Lexeme.ExtendedStrongsNumber}\t{wordForm.Lexeme.LexicalForm}\t{wordForm.RobinsonsMorphologicalAnalysisCode}\t{wordForm.LowercaseSpelling}");
+            }
         }
     }
 }

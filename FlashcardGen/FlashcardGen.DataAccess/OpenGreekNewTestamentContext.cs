@@ -8,6 +8,7 @@ public class OpenGreekNewTestamentContext : DbContext
     public DbSet<WordForm> WordForms { get; set; }
     public DbSet<Verse> Verses { get; set; }
     public DbSet<WordFormOccurrence> WordFormOccurrences { get; set; }
+    public DbSet<Card> Cards { get; set; }
 
     public OpenGreekNewTestamentContext()
     {
