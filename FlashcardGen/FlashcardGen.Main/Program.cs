@@ -32,7 +32,7 @@ using (var inMemoryConnection = new SqliteConnection(Constants.ConnectionStrings
         options => options.UseSqlite(inMemoryConnection)
     );
 
-    await services.BuildServiceProvider()
+    services.BuildServiceProvider()
     .GetService<ICardGenerator>()!
     .GenerateCards();
 }

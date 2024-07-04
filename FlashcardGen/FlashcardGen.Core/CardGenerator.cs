@@ -16,17 +16,18 @@ namespace FlashcardGen.Core
             _databaseAccessor = databaseAccessor;
         }
 
-        public async Task GenerateCards()
+        public void GenerateCards()
         {
             Console.WriteLine("Generating cards...");
             Console.WriteLine(_configuration[Constants.ConfigPaths.OpenGNTBaseTextZipURL]);
-            await _databaseAccessor.LoadDb();
+            _databaseAccessor.LoadDb();
 
             IQueryable<WordForm> wordForms = _databaseAccessor.GetOrderedWordForms();
-            foreach (var wordForm in wordForms.Take(1))
+            /*foreach (var wordForm in wordForms)
             {
-                Console.WriteLine($"{wordForm.Lexeme.ExtendedStrongsNumber}\t{wordForm.Lexeme.LexicalForm}\t{wordForm.RobinsonsMorphologicalAnalysisCode}\t{wordForm.LowercaseSpelling}");
-            }
+                var verseForWordFrom = _databaseAccessor.GetVerseForWordForm(wordForm);
+
+            }*/
         }
     }
 }

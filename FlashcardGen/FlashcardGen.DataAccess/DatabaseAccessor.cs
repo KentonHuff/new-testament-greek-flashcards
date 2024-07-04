@@ -27,9 +27,9 @@ namespace FlashcardGen.DataAccess
             _inMemoryConnection = inMemoryConnection;
         }
 
-        public async Task LoadDb()
+        public void LoadDb()
         {
-            await _dbContext.Database.EnsureCreatedAsync();
+            _dbContext.Database.EnsureCreated();
 
             if (bool.Parse(_configuration[Constants.ConfigPaths.ReadDbFromDisk]!) && File.Exists(Constants.LocalFiles.SQLiteDb))
             {
@@ -50,7 +50,7 @@ namespace FlashcardGen.DataAccess
                     if (i % 1000 == 0)
                         Console.WriteLine($"Populating database: {Math.Round(100 * (double)i / Constants.NumberOfWordOccurrences, 1)}%");
 
-                    await AddEntitiesFromRow(currentOpenGNTRow);
+                    AddEntitiesFromRow(currentOpenGNTRow);
 
                     currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
                 }
@@ -98,11 +98,11 @@ namespace FlashcardGen.DataAccess
             return result;
         }
 
-        private async Task AddEntitiesFromRow(string openGNTRow)
+        private void AddEntitiesFromRow(string openGNTRow)
         {
             OpenGNTRowEntities entities = Parsing.ParseOpenGNTRow(openGNTRow);
 
-            entities.Lexeme = await _dbContext.Lexemes.AddIfNotExistsAsync(
+            entities.Lexeme = _dbContext.Lexemes.AddIfNotExists(
                 entity: entities.Lexeme,
                 predicate: l => l.LexicalForm == entities.Lexeme.LexicalForm
                     && l.TyndaleHouseGloss == entities.Lexeme.TyndaleHouseGloss
@@ -110,7 +110,7 @@ namespace FlashcardGen.DataAccess
             entities.WordForm.LexemeId = entities.Lexeme.LexemeId;
             entities.WordForm.Lexeme = entities.Lexeme;
 
-            entities.WordForm = await _dbContext.WordForms.AddIfNotExistsAsync(
+            entities.WordForm = _dbContext.WordForms.AddIfNotExists(
                 entity: entities.WordForm,
                 predicate: wf => wf.LowercaseSpelling == entities.WordForm.LowercaseSpelling
                     && wf.RobinsonsMorphologicalAnalysisCode == entities.WordForm.RobinsonsMorphologicalAnalysisCode
@@ -119,7 +119,7 @@ namespace FlashcardGen.DataAccess
             entities.WordFormOccurrence.WordFormId = entities.WordForm.WordFormId;
             entities.WordFormOccurrence.WordForm = entities.WordForm;
 
-            entities.Verse = await _dbContext.Verses.AddIfNotExistsAsync(
+            entities.Verse = _dbContext.Verses.AddIfNotExists(
                 entity: entities.Verse,
                 predicate: v => v.BookNumber == entities.Verse.BookNumber
                     && v.ChapterNumber == entities.Verse.ChapterNumber
@@ -128,8 +128,8 @@ namespace FlashcardGen.DataAccess
             entities.WordFormOccurrence.VerseId = entities.Verse.VerseId;
             entities.WordFormOccurrence.Verse = entities.Verse;
 
-            await _dbContext.WordFormOccurrences.AddAsync(entities.WordFormOccurrence);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.WordFormOccurrences.Add(entities.WordFormOccurrence);
+            _dbContext.SaveChanges();
         }
     }
 }

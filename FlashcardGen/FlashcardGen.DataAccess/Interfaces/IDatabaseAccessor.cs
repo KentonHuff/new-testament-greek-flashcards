@@ -4,7 +4,8 @@ namespace FlashcardGen.DataAccess
 {
     public interface IDatabaseAccessor
     {
-        public Task LoadDb();
+        public void LoadDb();
         public IQueryable<WordForm> GetOrderedWordForms();
+        public WordFormOccurrence GetVerseForWordForm(WordForm wordForm);
     }
 }
