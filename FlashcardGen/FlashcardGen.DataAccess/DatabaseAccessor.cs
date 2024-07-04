@@ -12,22 +12,32 @@ namespace FlashcardGen.DataAccess
         private readonly OpenGreekNewTestamentContext _dbContext;
         private readonly ILocalFileAccessor _localFileAccessor;
         private readonly IConfiguration _configuration;
+        private readonly SqliteConnection _inMemoryConnection;
 
-        public DatabaseAccessor(OpenGreekNewTestamentContext dbContext, ILocalFileAccessor localFileAccessor, IConfiguration configuration)
+        public DatabaseAccessor(
+            OpenGreekNewTestamentContext dbContext,
+            ILocalFileAccessor localFileAccessor,
+            IConfiguration configuration,
+            SqliteConnection inMemoryConnection
+        )
         {
             _dbContext = dbContext;
             _localFileAccessor = localFileAccessor;
             _configuration = configuration;
+            _inMemoryConnection = inMemoryConnection;
         }
 
         public async Task LoadDb()
         {
             await _dbContext.Database.EnsureCreatedAsync();
 
-            if (_dbContext.Lexemes.Any())
+            if (bool.Parse(_configuration[Constants.ConfigPaths.ReadDbFromDisk]!) && File.Exists(Constants.LocalFiles.SQLiteDb))
             {
-                //We already read the db from disk in Program.cs
-                return;
+                using (var onDiskConnection = new SqliteConnection(Constants.ConnectionStrings.OnDisk))
+                {
+                    onDiskConnection.Open();
+                    onDiskConnection.BackupDatabase(_inMemoryConnection);
+                }
             }
             else if (bool.Parse(_configuration[Constants.ConfigPaths.ReadUncompressedOpenGNTBaseText]!))
             {
@@ -51,6 +61,15 @@ namespace FlashcardGen.DataAccess
             {
                 throw new NotImplementedException();
             }
+
+            if (bool.Parse(_configuration[Constants.ConfigPaths.WriteDbToDisk]!))
+            {
+                using (var onDiskConnection = new SqliteConnection(Constants.ConnectionStrings.OnDisk))
+                {
+                    onDiskConnection.Open();
+                    _inMemoryConnection.BackupDatabase(onDiskConnection);
+                }
+            }
         }
 
         public IQueryable<WordForm> GetOrderedWordForms()
@@ -64,6 +83,18 @@ namespace FlashcardGen.DataAccess
                 orderby lexeme.NumOccurrences descending, lexeme.LexemeId, wordForm.RobinsonsMorphologicalAnalysisCode
                 select wordForm
             ).Include(wf => wf.Lexeme);
+            return result;
+        }
+
+        public WordFormOccurrence GetVerseForWordForm(WordForm wordForm)
+        {
+            var result = (
+                from occurrence in _dbContext.WordFormOccurrences
+                where occurrence.WordFormId == wordForm.WordFormId
+                orderby occurrence.Verse.WordFormOccurrences.Where(o => !_dbContext.Cards.Select(c => c.WordFormOccurrence.WordFormId).Contains(o.WordFormId)).Count(), _dbContext.Cards.Where(c => c.WordFormOccurrence.VerseId == occurrence.VerseId).Count()
+                select occurrence
+            ).First();
+
             return result;
         }
 

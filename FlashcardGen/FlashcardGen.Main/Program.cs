@@ -26,14 +26,7 @@ using (var inMemoryConnection = new SqliteConnection(Constants.ConnectionStrings
 {
     inMemoryConnection.Open();
 
-    if (bool.Parse(configuration[Constants.ConfigPaths.ReadDbFromDisk]!) && File.Exists(Constants.LocalFiles.SQLiteDb))
-    {
-        using (var onDiskConnection = new SqliteConnection(Constants.ConnectionStrings.OnDisk))
-        {
-            onDiskConnection.Open();
-            onDiskConnection.BackupDatabase(inMemoryConnection);
-        }
-    }
+    services.AddSingleton<SqliteConnection>(inMemoryConnection);
 
     services.AddDbContext<OpenGreekNewTestamentContext>(
         options => options.UseSqlite(inMemoryConnection)
@@ -42,13 +35,4 @@ using (var inMemoryConnection = new SqliteConnection(Constants.ConnectionStrings
     await services.BuildServiceProvider()
     .GetService<ICardGenerator>()!
     .GenerateCards();
-
-    if (bool.Parse(configuration[Constants.ConfigPaths.WriteDbToDisk]!))
-    {
-        using (var onDiskConnection = new SqliteConnection(Constants.ConnectionStrings.OnDisk))
-        {
-            onDiskConnection.Open();
-            inMemoryConnection.BackupDatabase(onDiskConnection);
-        }
-    }
 }
