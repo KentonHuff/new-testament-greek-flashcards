@@ -22,6 +22,27 @@ namespace FlashcardGen.Core
             Console.WriteLine(_configuration[Constants.ConfigPaths.OpenGNTBaseTextZipURL]);
             _databaseAccessor.LoadDb();
 
+            if (_databaseAccessor.ShouldPopulateCardsTable())
+            {
+                PopulateCards();
+            }
+
+            _databaseAccessor.WriteDbToDisk();
+
+            WriteCardsToDisk(_databaseAccessor.GetCards());
+        }
+
+        private void WriteCardsToDisk(IQueryable<Card> cards)
+        {
+            foreach (var card in cards)
+            {
+                //Console.WriteLine(Serializing.SerializeCard(card));
+                _ = Serializing.SerializeCard(card);
+            }
+        }
+
+        private void PopulateCards()
+        {
             IQueryable<WordForm> wordForms = _databaseAccessor.GetOrderedWordForms();
 
             int i = 0;
@@ -29,8 +50,9 @@ namespace FlashcardGen.Core
             {
                 var verseForWordFrom = _databaseAccessor.GetVerseForWordForm(wordForm);
                 if (i % 500 == 0)
-                    Console.WriteLine(++i);
+                    Console.WriteLine(i);
                 _databaseAccessor.AddCard(verseForWordFrom);
+                ++i;
             }
         }
     }

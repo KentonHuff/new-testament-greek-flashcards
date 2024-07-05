@@ -8,5 +8,8 @@ namespace FlashcardGen.DataAccess
         public IQueryable<WordForm> GetOrderedWordForms();
         public WordFormOccurrence GetVerseForWordForm(WordForm wordForm);
         public void AddCard(WordFormOccurrence verseForCard);
+        public void WriteDbToDisk();
+        public bool ShouldPopulateCardsTable();
+        public IQueryable<Card> GetCards();
     }
 }

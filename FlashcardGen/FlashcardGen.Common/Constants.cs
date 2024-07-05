@@ -25,5 +25,22 @@
             public const string InMemory = "DataSource=:memory:";
             public const string OnDisk = $"DataSource={LocalFiles.SQLiteDb}";
         }
+
+        public static readonly Dictionary<char,string> GreekPreOccurrencePunctuationMapping = new Dictionary<char, string>()
+        {
+            { '¬', "<br>&nbsp;&nbsp;&nbsp;&nbsp;" },
+            { '[', "[" },
+        };
+
+        public static readonly Dictionary<char, string> GreekPostOccurrencePunctuationMapping = new Dictionary<char, string>()
+        {
+            { ',', ", " },
+            { '.', ". " },
+            { '¶', "<br>" },
+            { '·', "· " },
+            { ';', "; " },
+            { '—', " — " },
+            { ']', "]" },
+        };
     }
 }

@@ -66,7 +66,10 @@ namespace FlashcardGen.DataAccess
             Console.WriteLine(_dbContext.WordFormOccurrences.Count());
             Console.WriteLine(_dbContext.Verses.Count());
             Console.WriteLine(_dbContext.Cards.Count());
+        }
 
+        public void WriteDbToDisk()
+        {
             if (bool.Parse(_configuration[Constants.ConfigPaths.WriteDbToDisk]!))
             {
                 using (var onDiskConnection = new SqliteConnection(Constants.ConnectionStrings.OnDisk))
@@ -75,6 +78,25 @@ namespace FlashcardGen.DataAccess
                     _inMemoryConnection.BackupDatabase(onDiskConnection);
                 }
             }
+        }
+
+        public bool ShouldPopulateCardsTable()
+        {
+            return _dbContext.Cards.Count() == 0;
+        }
+
+        public IQueryable<Card> GetCards()
+        {
+            return _dbContext.Cards
+                //.AsNoTracking()
+                .OrderBy(c => c.CardId)
+                .Include(c => c.WordFormOccurrence)
+                    .ThenInclude(wfo => wfo.WordForm)
+                        .ThenInclude(wf => wf.Lexeme)
+                .Include(c => c.WordFormOccurrence)
+                    .ThenInclude(wfo => wfo.Verse)
+                        .ThenInclude(v => v.WordFormOccurrences)
+                            .ThenInclude(wfo => wfo.WordForm);
         }
 
         public IQueryable<WordForm> GetOrderedWordForms()
@@ -133,6 +155,7 @@ namespace FlashcardGen.DataAccess
                 predicate: l => l.LexicalForm == entities.Lexeme.LexicalForm
                     && l.TyndaleHouseGloss == entities.Lexeme.TyndaleHouseGloss
                 );
+            entities.WordForm.LexemeId = entities.Lexeme.LexemeId;
             entities.WordForm.Lexeme = entities.Lexeme;
 
             entities.WordForm = _dbContext.WordForms.AddIfNotExists(
@@ -141,6 +164,7 @@ namespace FlashcardGen.DataAccess
                     && wf.RobinsonsMorphologicalAnalysisCode == entities.WordForm.RobinsonsMorphologicalAnalysisCode
                     && wf.LexemeId == entities.WordForm.LexemeId
             );
+            entities.WordFormOccurrence.WordFormId = entities.WordForm.WordFormId;
             entities.WordFormOccurrence.WordForm = entities.WordForm;
 
             entities.Verse = _dbContext.Verses.AddIfNotExists(
@@ -149,6 +173,7 @@ namespace FlashcardGen.DataAccess
                     && v.ChapterNumber == entities.Verse.ChapterNumber
                     && v.VerseNumber == entities.Verse.VerseNumber
             );
+            entities.WordFormOccurrence.VerseId = entities.Verse.VerseId;
             entities.WordFormOccurrence.Verse = entities.Verse;
 
             _dbContext.WordFormOccurrences.Add(entities.WordFormOccurrence);
