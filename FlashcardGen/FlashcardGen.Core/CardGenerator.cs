@@ -28,7 +28,8 @@ namespace FlashcardGen.Core
             foreach (var wordForm in wordForms)
             {
                 var verseForWordFrom = _databaseAccessor.GetVerseForWordForm(wordForm);
-                //Console.WriteLine($"{wordForm.LowercaseSpelling}: {string.Join(" ", verseForWordFrom.Verse.WordFormOccurrences.Select(o => o.WordForm.LowercaseSpelling))}");
+                if (i % 500 == 0)
+                    Console.WriteLine(++i);
                 _databaseAccessor.AddCard(verseForWordFrom);
             }
         }

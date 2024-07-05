@@ -30,6 +30,7 @@ namespace FlashcardGen.DataAccess
         public void LoadDb()
         {
             _dbContext.Database.EnsureCreated();
+            _dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
 
             if (bool.Parse(_configuration[Constants.ConfigPaths.ReadDbFromDisk]!) && File.Exists(Constants.LocalFiles.SQLiteDb))
             {
@@ -41,8 +42,6 @@ namespace FlashcardGen.DataAccess
             }
             else if (bool.Parse(_configuration[Constants.ConfigPaths.ReadUncompressedOpenGNTBaseText]!))
             {
-                _dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
-
                 string? currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
 
                 for (int i = 0; currentOpenGNTRow != null; ++i)
@@ -55,12 +54,18 @@ namespace FlashcardGen.DataAccess
                     currentOpenGNTRow = _localFileAccessor.GetNextOpenGNTRow();
                 }
 
-                _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+                //_dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             }
             else
             {
                 throw new NotImplementedException();
             }
+
+            Console.WriteLine(_dbContext.Lexemes.Count());
+            Console.WriteLine(_dbContext.WordForms.Count());
+            Console.WriteLine(_dbContext.WordFormOccurrences.Count());
+            Console.WriteLine(_dbContext.Verses.Count());
+            Console.WriteLine(_dbContext.Cards.Count());
 
             if (bool.Parse(_configuration[Constants.ConfigPaths.WriteDbToDisk]!))
             {
@@ -82,13 +87,14 @@ namespace FlashcardGen.DataAccess
                         on wordForm.LexemeId equals lexeme.LexemeId
                 orderby lexeme.NumOccurrences descending, lexeme.LexemeId, wordForm.RobinsonsMorphologicalAnalysisCode
                 select wordForm
-            );
+            ).AsNoTracking();
             return result;
         }
 
         public WordFormOccurrence GetVerseForWordForm(WordForm wordForm)
         {
             var result = _dbContext.WordFormOccurrences
+                .AsNoTracking()
                 .Where(wfo => wfo.WordFormId == wordForm.WordFormId)
                 .Select(wfo => new
                 {
@@ -101,9 +107,9 @@ namespace FlashcardGen.DataAccess
                 .OrderBy(e => e.VersesNumUnknownOccurrences)
                 .ThenBy(e => e.VersesNumCards)
                 .Select(e => e.WordFormOccurrence)
-                .Include(wfo => wfo.Verse)
-                    .ThenInclude(v => v.WordFormOccurrences)
-                        .ThenInclude(wfo => wfo.WordForm)
+                //.Include(wfo => wfo.Verse)
+                //    .ThenInclude(v => v.WordFormOccurrences)
+                //        .ThenInclude(wfo => wfo.WordForm)
                 .First();
             return result;
         }
@@ -127,7 +133,6 @@ namespace FlashcardGen.DataAccess
                 predicate: l => l.LexicalForm == entities.Lexeme.LexicalForm
                     && l.TyndaleHouseGloss == entities.Lexeme.TyndaleHouseGloss
                 );
-            entities.WordForm.LexemeId = entities.Lexeme.LexemeId;
             entities.WordForm.Lexeme = entities.Lexeme;
 
             entities.WordForm = _dbContext.WordForms.AddIfNotExists(
@@ -136,7 +141,6 @@ namespace FlashcardGen.DataAccess
                     && wf.RobinsonsMorphologicalAnalysisCode == entities.WordForm.RobinsonsMorphologicalAnalysisCode
                     && wf.LexemeId == entities.WordForm.LexemeId
             );
-            entities.WordFormOccurrence.WordFormId = entities.WordForm.WordFormId;
             entities.WordFormOccurrence.WordForm = entities.WordForm;
 
             entities.Verse = _dbContext.Verses.AddIfNotExists(
@@ -145,7 +149,6 @@ namespace FlashcardGen.DataAccess
                     && v.ChapterNumber == entities.Verse.ChapterNumber
                     && v.VerseNumber == entities.Verse.VerseNumber
             );
-            entities.WordFormOccurrence.VerseId = entities.Verse.VerseId;
             entities.WordFormOccurrence.Verse = entities.Verse;
 
             _dbContext.WordFormOccurrences.Add(entities.WordFormOccurrence);
