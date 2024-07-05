@@ -82,20 +82,40 @@ namespace FlashcardGen.DataAccess
                         on wordForm.LexemeId equals lexeme.LexemeId
                 orderby lexeme.NumOccurrences descending, lexeme.LexemeId, wordForm.RobinsonsMorphologicalAnalysisCode
                 select wordForm
-            ).Include(wf => wf.Lexeme);
+            );
             return result;
         }
 
         public WordFormOccurrence GetVerseForWordForm(WordForm wordForm)
         {
-            var result = (
-                from occurrence in _dbContext.WordFormOccurrences
-                where occurrence.WordFormId == wordForm.WordFormId
-                orderby occurrence.Verse.WordFormOccurrences.Where(o => !_dbContext.Cards.Select(c => c.WordFormOccurrence.WordFormId).Contains(o.WordFormId)).Count(), _dbContext.Cards.Where(c => c.WordFormOccurrence.VerseId == occurrence.VerseId).Count()
-                select occurrence
-            ).First();
-
+            var result = _dbContext.WordFormOccurrences
+                .Where(wfo => wfo.WordFormId == wordForm.WordFormId)
+                .Select(wfo => new
+                {
+                    WordFormOccurrence = wfo,
+                    VersesNumUnknownOccurrences = wfo.Verse.WordFormOccurrences
+                        .Where(wfo => !_dbContext.Cards.Select(c => c.WordFormOccurrence.WordFormId).Contains(wfo.WordFormId)).Count(),
+                    VersesNumWords = wfo.Verse.WordFormOccurrences.Count(),
+                    VersesNumCards = _dbContext.Cards.Where(c => c.WordFormOccurrence.VerseId == wfo.VerseId).Count(),
+                })
+                .OrderBy(e => e.VersesNumUnknownOccurrences)
+                .ThenBy(e => e.VersesNumCards)
+                .Select(e => e.WordFormOccurrence)
+                .Include(wfo => wfo.Verse)
+                    .ThenInclude(v => v.WordFormOccurrences)
+                        .ThenInclude(wfo => wfo.WordForm)
+                .First();
             return result;
+        }
+
+        public void AddCard(WordFormOccurrence verseForCard)
+        {
+            _dbContext.Cards.Add(new Card
+            {
+                WordFormOccurrenceId = verseForCard.WordFormOccurrenceId,
+            });
+
+            _dbContext.SaveChanges();
         }
 
         private void AddEntitiesFromRow(string openGNTRow)

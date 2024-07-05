@@ -23,11 +23,14 @@ namespace FlashcardGen.Core
             _databaseAccessor.LoadDb();
 
             IQueryable<WordForm> wordForms = _databaseAccessor.GetOrderedWordForms();
-            /*foreach (var wordForm in wordForms)
+
+            int i = 0;
+            foreach (var wordForm in wordForms)
             {
                 var verseForWordFrom = _databaseAccessor.GetVerseForWordForm(wordForm);
-
-            }*/
+                //Console.WriteLine($"{wordForm.LowercaseSpelling}: {string.Join(" ", verseForWordFrom.Verse.WordFormOccurrences.Select(o => o.WordForm.LowercaseSpelling))}");
+                _databaseAccessor.AddCard(verseForWordFrom);
+            }
         }
     }
 }
