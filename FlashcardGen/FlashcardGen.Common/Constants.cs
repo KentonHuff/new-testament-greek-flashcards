@@ -10,6 +10,7 @@
             public const string OpenGreekNewTestamentFileName = "OpenGNT_version3_3.csv";
             public const string InputFilesPath = "./LocalFiles/Input/";
             public const string SQLiteDb = "./LocalFiles/Input/OpenGNTSQLite.db";
+            public const string OutputFilePath = "./LocalFiles/Output/AnkiFlashcards.txt";
         }
 
         public static class ConfigPaths

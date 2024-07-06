@@ -6,6 +6,7 @@ namespace FlashcardGen.DataAccess
     public class LocalFileAccessor : ILocalFileAccessor
     {
         private IEnumerator<string> _openGNTLines;
+        private StreamWriter _cardWriter;
         public LocalFileAccessor()
         {
             _openGNTLines = File.ReadLines(
@@ -14,6 +15,14 @@ namespace FlashcardGen.DataAccess
             ).GetEnumerator();
 
             _ = _openGNTLines.MoveNext(); //Skip the column name row
+
+            _cardWriter = new StreamWriter(Constants.LocalFiles.OutputFilePath, false);
+            _cardWriter.AutoFlush = true;
+        }
+
+        public void WriteFlashcard(string flashcard)
+        {
+            _cardWriter.WriteLine(flashcard);
         }
 
         public string? GetNextOpenGNTRow()

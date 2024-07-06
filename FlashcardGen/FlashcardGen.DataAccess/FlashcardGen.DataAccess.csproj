@@ -18,6 +18,9 @@
     <None Update="LocalFiles\Input\OpenGNT_version3_3.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="LocalFiles\Output\AnkiFlashcards.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

@@ -9,11 +9,13 @@ namespace FlashcardGen.Core
     {
         private readonly IConfiguration _configuration;
         private readonly IDatabaseAccessor _databaseAccessor;
+        private readonly ILocalFileAccessor _localFileAccessor;
 
-        public CardGenerator(IConfiguration configuration, IDatabaseAccessor databaseAccessor)
+        public CardGenerator(IConfiguration configuration, IDatabaseAccessor databaseAccessor, ILocalFileAccessor localFileAccessor)
         {
             _configuration = configuration;
             _databaseAccessor = databaseAccessor;
+            _localFileAccessor = localFileAccessor;
         }
 
         public void GenerateCards()
@@ -36,8 +38,7 @@ namespace FlashcardGen.Core
         {
             foreach (var card in cards)
             {
-                //Console.WriteLine(Serializing.SerializeCard(card));
-                _ = Serializing.SerializeCard(card);
+                _localFileAccessor.WriteFlashcard(Serializing.SerializeCard(card));
             }
         }
 
