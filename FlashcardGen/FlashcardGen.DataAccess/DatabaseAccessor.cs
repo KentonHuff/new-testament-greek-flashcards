@@ -96,7 +96,10 @@ namespace FlashcardGen.DataAccess
                 .Include(c => c.WordFormOccurrence)
                     .ThenInclude(wfo => wfo.Verse)
                         .ThenInclude(v => v.WordFormOccurrences)
-                            .ThenInclude(wfo => wfo.WordForm);
+                            .ThenInclude(wfo => wfo.WordForm)
+                 .Include(c => c.WordFormOccurrence)
+                    .ThenInclude(wfo => wfo.WordForm)
+                        .ThenInclude(wf => wf.WordFormOccurrences);
         }
 
         public IQueryable<WordForm> GetOrderedWordForms()
